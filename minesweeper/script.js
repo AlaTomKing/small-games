@@ -25,24 +25,32 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
         return
     }
 
-    let minePosition = new Array(gridWidth * gridHeight)
-    let detectorPosition = new Array(gridWidth * gridHeight)
-    let coveredPosition = new Array(gridWidth * gridHeight).fill(true)
-    let flagPosition = new Array(gridWidth * gridHeight).fill(false)
-    let neighboursBlankPosition = new Array(gridWidth * gridHeight).fill(false)
-
     let mouseX, mouseY
     let gridX, gridY
     let detectX, detectY
     let mouseDown, mouse1Down, mouse3Down, detectorDown = false
 
     let win = false
+
     let lessAnnoying = true // skips having to find a clear area
     let wrapfield = false // edge grids detecing mines can detect opposite sides
 
     let firstTry = false
     let clearedGrids = []
     let neighboursToClear = []
+
+    const params = URLSearchParams(window.location.search)
+    gridWidth = params.get("w")
+    gridHeight = params.get("h")
+    mines = params.get("m")
+    wrapfield = params.get("wrap")
+    lessAnnoying = params.get("a")
+
+    let minePosition = new Array(gridWidth * gridHeight)
+    let detectorPosition = new Array(gridWidth * gridHeight)
+    let coveredPosition = new Array(gridWidth * gridHeight).fill(true)
+    let flagPosition = new Array(gridWidth * gridHeight).fill(false)
+    let neighboursBlankPosition = new Array(gridWidth * gridHeight).fill(false)
 
     let lostPotision
 

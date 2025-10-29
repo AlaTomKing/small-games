@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tic tac toe - small games</title>
+    <style>
+        body {
+            font-family: "Comic Sans MS", Arial, Helvetica, sans-serif;
+            text-align: center;
+            margin-inline: 32px;
+            overflow-x: hidden;
+            background-color: #aaa;
+        }
+
+        a, a:visited {
+            color: #00f;
+        }
+
+        a:hover {
+            color: #ff0;
+        }
+
+        a:active {
+            color: #fc0;
+        }
+
+        #frame {
+            aspect-ratio: 1.333333;
+            background-color: #ddd;
+
+            border: solid black 1px;
+            border-radius: 3px;
+
+            max-height: 70vh;
+
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>small games: ludo</h1>
+    <p>by tom</p>
+    <p>roll the dice until you win</p>
+    <a href="/">return to main website</a><br>
+
+    <div id="frame">
+        
+    </div>
+
+    <button id="connect">connect</button><button id="disconnect">disconnect</button><br>
+    <input id="msgbox" type="text" value="Hello, world!"><button id="send">send</button><br>
+    <small>© 2025 AlaTomKing</small>
+
+    <script type="module" src="index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="resources/favicon.png">
+    <title>Minesweeper</title>
+    <style>
+        body {
+            background-color: black;
+            margin: 0;
+        }
+
+        #game {
+            image-rendering: pixelated;
+
+            position: absolute;
+
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%)
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="game"></canvas>
+    <script src="script.js"></script>
+</body>
+
+</html>

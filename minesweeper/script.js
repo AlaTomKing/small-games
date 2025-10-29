@@ -39,7 +39,7 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
     let clearedGrids = []
     let neighboursToClear = []
 
-    const params = URLSearchParams(window.location.search)
+    const params = new URLSearchParams(window.location.search)
     if (params.get("w")) gridWidth = params.get("w")
     if (params.get("h")) gridHeight = params.get("h")
     if (params.get("m")) mines = params.get("m")

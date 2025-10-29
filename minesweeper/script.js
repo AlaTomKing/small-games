@@ -44,7 +44,7 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
     if (params.get("h")) gridHeight = params.get("h")
     if (params.get("m")) mines = params.get("m")
     if (params.get("wrap")) wrapfield = params.get("wrap")
-    if (params.get("a")) lessAnnoying = params.get("a")
+    if (params.get("lessannoying")) lessAnnoying = params.get("lessannoying")
 
     let minePosition = new Array(gridWidth * gridHeight)
     let detectorPosition = new Array(gridWidth * gridHeight)

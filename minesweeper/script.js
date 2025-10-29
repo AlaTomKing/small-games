@@ -40,11 +40,11 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
     let neighboursToClear = []
 
     const params = URLSearchParams(window.location.search)
-    gridWidth = params.get("w")
-    gridHeight = params.get("h")
-    mines = params.get("m")
-    wrapfield = params.get("wrap")
-    lessAnnoying = params.get("a")
+    if (params.get("w")) gridWidth = params.get("w")
+    if (params.get("h")) gridHeight = params.get("h")
+    if (params.get("m")) mines = params.get("m")
+    if (params.get("wrap")) wrapfield = params.get("wrap")
+    if (params.get("a")) lessAnnoying = params.get("a")
 
     let minePosition = new Array(gridWidth * gridHeight)
     let detectorPosition = new Array(gridWidth * gridHeight)

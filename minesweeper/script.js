@@ -16,14 +16,9 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
     let texture = new Image()
     texture.src = "./resources/spritesheet_dark.png"
 
-    const zoom = 2
+    const zoom = window.devicePixelRatio
 
     let mines = 99
-
-    if (mines >= gridHeight * gridWidth) {
-        console.error("Number of mines can not be larger than cell size")
-        return
-    }
 
     let mouseX, mouseY
     let gridX, gridY
@@ -40,11 +35,17 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
     let neighboursToClear = []
 
     const params = new URLSearchParams(window.location.search)
-    if (params.get("w")) gridWidth = params.get("w")
-    if (params.get("h")) gridHeight = params.get("h")
-    if (params.get("m")) mines = params.get("m")
-    if (params.get("wrap")) wrapfield = params.get("wrap")
-    if (params.get("lessannoying")) lessAnnoying = params.get("lessannoying")
+    if (params.get("w")) gridWidth = Number(params.get("w"))
+    if (params.get("h")) gridHeight = Number(params.get("h"))
+    if (params.get("m")) mines = Number(params.get("m"))
+    if (params.get("wrap")) wrapfield = params.get("wrap") === "true"
+    if (params.get("lessannoying")) lessAnnoying = params.get("lessannoying") === "true"
+    
+    console.log(gridWidth,gridHeight,mines,wrapfield,lessAnnoying)
+    if (mines >= gridHeight * gridWidth) {
+        console.error("Number of mines can not be larger than cell size")
+        return
+    }
 
     let minePosition = new Array(gridWidth * gridHeight)
     let detectorPosition = new Array(gridWidth * gridHeight)

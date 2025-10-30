@@ -10,15 +10,15 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
     const canvas = document.querySelector("#game")
     const ctx = canvas.getContext("2d")
 
-    const gridWidth = 30
-    const gridHeight = 16
+    let gridWidth = 16
+    let gridHeight = 16
 
     let texture = new Image()
     texture.src = "./resources/spritesheet_dark.png"
 
     const zoom = 2
 
-    const mines = 99
+    let mines = 99
 
     if (mines >= gridHeight * gridWidth) {
         console.error("Number of mines can not be larger than cell size")

@@ -14,11 +14,20 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
     let gridHeight = 16
 
     let texture = new Image()
-    texture.src = "./resources/spritesheet_dark.png"
+
+    let textures = [
+        "spritesheet",
+        "spritesheet_dark",
+        "spritesheet_95",
+        "spritesheet_nocolor",
+        "spritesheet_flat"
+    ]
 
     const zoom = window.devicePixelRatio
 
-    let mines = 99
+    let mines = 40
+
+    let theme = 0
 
     let mouseX, mouseY
     let gridX, gridY
@@ -35,13 +44,16 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
     let neighboursToClear = []
 
     const params = new URLSearchParams(window.location.search)
+    if (params.get("t")) theme = Number(params.get("t"))
     if (params.get("w")) gridWidth = Number(params.get("w"))
     if (params.get("h")) gridHeight = Number(params.get("h"))
     if (params.get("m")) mines = Number(params.get("m"))
     if (params.get("wrap")) wrapfield = params.get("wrap") === "true"
     if (params.get("lessannoying")) lessAnnoying = params.get("lessannoying") === "true"
-    
-    console.log(gridWidth,gridHeight,mines,wrapfield,lessAnnoying)
+
+    texture.src = `./resources/${textures[theme]}.png`
+
+    console.log(gridWidth, gridHeight, mines, wrapfield, lessAnnoying, theme)
     if (mines >= gridHeight * gridWidth) {
         console.error("Number of mines can not be larger than cell size")
         return
@@ -61,7 +73,7 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
     let con2Dto1D_check
     let getMineGrid
     let floodFill
-    
+
     if (wrapfield) {
         con2Dto1D_check = (x, y) => (mod(x, gridWidth) + mod(y, gridHeight) * gridWidth)
         getMineGrid = (x, y) => minePosition[con2Dto1D(mod(x, gridWidth), mod(y, gridHeight))]
@@ -78,26 +90,26 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
                 floodFill(mod(x + 1, gridWidth), mod(y + 1, gridHeight))
                 clearedGrids.push(con2Dto1D(x, y))
             }
-    }
+        }
     } else {
         con2Dto1D_check = (x, y) => (x >= 0 && x < gridWidth) && (y >= 0 && y < gridHeight) ? (x + y * gridWidth) : -1
         getMineGrid = (x, y) => (x >= 0 && x < gridWidth) && (y >= 0 && y < gridHeight) && minePosition[con2Dto1D(x, y)]
         floodFill = (x, y) => {
-        if ((x >= 0 && x < gridWidth) && (y >= 0 && y < gridHeight)) {
-            if (coveredPosition[con2Dto1D(x, y)] && !detectorPosition[con2Dto1D(x, y)] && !minePosition[con2Dto1D(x, y)]) {
-                coveredPosition[con2Dto1D(x, y)] = false
-                floodFill(x, y + 1)
-                floodFill(x, y - 1)
-                floodFill(x + 1, y)
-                floodFill(x - 1, y)
-                floodFill(x - 1, y - 1)
-                floodFill(x + 1, y - 1)
-                floodFill(x - 1, y + 1)
-                floodFill(x + 1, y + 1)
-                clearedGrids.push(con2Dto1D(x, y))
+            if ((x >= 0 && x < gridWidth) && (y >= 0 && y < gridHeight)) {
+                if (coveredPosition[con2Dto1D(x, y)] && !detectorPosition[con2Dto1D(x, y)] && !minePosition[con2Dto1D(x, y)]) {
+                    coveredPosition[con2Dto1D(x, y)] = false
+                    floodFill(x, y + 1)
+                    floodFill(x, y - 1)
+                    floodFill(x + 1, y)
+                    floodFill(x - 1, y)
+                    floodFill(x - 1, y - 1)
+                    floodFill(x + 1, y - 1)
+                    floodFill(x - 1, y + 1)
+                    floodFill(x + 1, y + 1)
+                    clearedGrids.push(con2Dto1D(x, y))
+                }
             }
         }
-    }
     }
 
     const clearGrid = (x, y) => {
@@ -192,6 +204,8 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
                 //ctx.globalAlpha = 1
                 if (con2Dto1D(x, y) == lostPotision) {
                     ctx.drawImage(texture, 64, 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
+                } else if (lostPotision != null && flagPosition[con2Dto1D(x, y)] && !minePosition[con2Dto1D(x, y)]) {
+                    ctx.drawImage(texture, 208, 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
                 } else if (flagPosition[con2Dto1D(x, y)]) {
                     ctx.drawImage(texture, 16, 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
                 } else if (neighboursBlankPosition[con2Dto1D(x, y)]) {
@@ -242,14 +256,14 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
             else if (!val) cleared++
         })
 
-        if ((gridWidth*gridHeight)-cleared == mines && minesCovered == mines) {
+        if ((gridWidth * gridHeight) - cleared == mines && minesCovered == mines) {
             minePosition.forEach((val, idx) => {
                 if (val) flagPosition[idx] = true
             })
             render()
             win = true
         } else {
-            console.log("not win", (gridWidth*gridHeight)-cleared, minesCovered, mines)
+            //console.log("not win", (gridWidth*gridHeight)-cleared, minesCovered, mines)
         }
     }
 
@@ -270,7 +284,7 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
             mouse3Down = click
         }
 
-        console.log(mouse.button)
+        //console.log(mouse.button)
 
         mouseDown = click
 
@@ -411,7 +425,7 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
     window.addEventListener('mousedown', (mouse) => detectMouse(mouse, true))
     window.addEventListener('mouseup', (mouse) => detectMouse(mouse, false))
 
-    window.addEventListener('keydown', (e) => {if (e.key == "r") reset()})
+    window.addEventListener('keydown', (e) => { if (e.key == "r") reset() })
 
     canvas.addEventListener('contextmenu', (e) => { e.preventDefault() })
 })()

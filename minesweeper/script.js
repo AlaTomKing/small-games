@@ -19,7 +19,9 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
         "spritesheet",
         "spritesheet_dark",
         "spritesheet_95",
+        "spritesheet_95_dark",
         "spritesheet_nocolor",
+        "spritesheet_nocolor_dark",
         "spritesheet_flat"
     ]
 
@@ -39,11 +41,14 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
     let lessAnnoying = true // skips having to find a clear area
     let wrapfield = false // edge grids detecing mines can detect opposite sides
 
+    let tries = 1 //
+
     let firstTry = false
     let clearedGrids = []
     let neighboursToClear = []
 
     const params = new URLSearchParams(window.location.search)
+    if (params.get("l")) tries = Number(params.get("l"))
     if (params.get("t")) theme = Number(params.get("t"))
     if (params.get("w")) gridWidth = Number(params.get("w"))
     if (params.get("h")) gridHeight = Number(params.get("h"))
@@ -65,7 +70,7 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
     let flagPosition = new Array(gridWidth * gridHeight).fill(false)
     let neighboursBlankPosition = new Array(gridWidth * gridHeight).fill(false)
 
-    let lostPotision
+    let lostPosition // why was this called lostPotision???
 
     const mod = (x, y) => (((x % y) + y) % y)
     const con1Dto2D = (x) => [x % gridWidth, Math.floor(x / gridWidth)]
@@ -157,7 +162,7 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
     const reset = () => {
         win = false
         firstTry = false
-        lostPotision = null
+        lostPosition = null
 
         minePosition = new Array(gridWidth * gridHeight)
         detectorPosition = new Array(gridWidth * gridHeight)
@@ -202,27 +207,28 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
         for (let x = 0; x < gridWidth; x++) {
             for (let y = 0; y < gridHeight; y++) {
                 //ctx.globalAlpha = 1
-                if (con2Dto1D(x, y) == lostPotision) {
+                if (con2Dto1D(x, y) == lostPosition)
                     ctx.drawImage(texture, 64, 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
-                } else if (lostPotision != null && flagPosition[con2Dto1D(x, y)] && !minePosition[con2Dto1D(x, y)]) {
+                else if (lostPosition != null && flagPosition[con2Dto1D(x, y)] && !minePosition[con2Dto1D(x, y)])
                     ctx.drawImage(texture, 208, 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
-                } else if (flagPosition[con2Dto1D(x, y)]) {
-                    ctx.drawImage(texture, 16, 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
-                } else if (neighboursBlankPosition[con2Dto1D(x, y)]) {
+                else if (flagPosition[con2Dto1D(x, y)])
+                    if (lostPosition != null && !minePosition[con2Dto1D(x, y)])
+                        ctx.drawImage(texture, 208, 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
+                    else
+                        ctx.drawImage(texture, 16, 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
+                else if (neighboursBlankPosition[con2Dto1D(x, y)])
                     ctx.drawImage(texture, 32, 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
-                } else if (coveredPosition[con2Dto1D(x, y)]) {
-                    if (mouse1Down && !detectorDown && x == gridX && y == gridY) {
+                else if (coveredPosition[con2Dto1D(x, y)]) 
+                    if (mouse1Down && !detectorDown && x == gridX && y == gridY) 
                         ctx.drawImage(texture, 32, 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
-                    } else {
+                    else
                         ctx.drawImage(texture, 0, 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
-                    }
-                } else if (getMineGrid(x, y)) {
+                else if (getMineGrid(x, y))
                     ctx.drawImage(texture, 48, 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
-                } else if (detectorPosition[con2Dto1D(x, y)]) {
+                else if (detectorPosition[con2Dto1D(x, y)]) 
                     ctx.drawImage(texture, 64 + 16 * detectorPosition[con2Dto1D(x, y)], 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
-                } else {
+                else
                     ctx.drawImage(texture, 32, 0, 16, 16, 16 * x * zoom, 16 * y * zoom, 16 * zoom, 16 * zoom)
-                }
             }
         }
     }
@@ -272,7 +278,7 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
 
         trackMouse(mouse)
 
-        if (lostPotision) {
+        if (lostPosition) {
             return
         }
 
@@ -317,7 +323,7 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
             }
 
             if (minePosition[con2Dto1D(gridX, gridY)]) {
-                lostPotision = con2Dto1D(gridX, gridY)
+                lostPosition = con2Dto1D(gridX, gridY)
 
                 for (let x = 0; x < gridWidth; x++)
                     for (let y = 0; y < gridHeight; y++)
@@ -383,7 +389,7 @@ Professionals: 480 fields (30*16), 99 mines or 170 mines
                 neighboursBlankPosition.forEach((val, idx) => {
                     if (val && iter) {
                         if (!flagPosition[idx] && minePosition[idx]) {
-                            lostPotision = idx
+                            lostPosition = idx
                             iter = false
 
                             for (let x = 0; x < gridWidth; x++)

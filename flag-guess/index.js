@@ -16,8 +16,8 @@ const answerContext = canvas1.getContext("2d");
 const canvas2 = document.createElement("canvas");
 const guessContext = canvas2.getContext("2d");
 
-canvas.width = 1800;
-canvas.height = 1200;
+canvas.width = 512;
+canvas.height = 512;
 
 canvas1.width = canvas.width;
 canvas1.height = canvas.height;
@@ -353,7 +353,11 @@ const dependentTerritories = {
 let guesses = 0;
 let playing = true;
 
+let debounce = true;
+
 let guessFlags = [];
+
+let flag;
 
 const objects = Object.assign(countriesList, unrecognisedStates, dependentTerritories);
 
@@ -362,10 +366,43 @@ const randomKey = function (obj) {
     return keys[keys.length * Math.random() << 0];
 };
 
-const deltaE = (r0, g0, b0, r1, g1, b1) => Math.sqrt((r1 - r0) ** 2 + (g1 - g0) ** 2 + (b1 - b0) ** 2) / 441.6729559300637;
+// credit: rgb-lab by antimatter15
+function deltaE(rgbA, rgbB) {
+  let labA = rgb2lab(rgbA);
+  let labB = rgb2lab(rgbB);
+  let deltaL = labA[0] - labB[0];
+  let deltaA = labA[1] - labB[1];
+  let deltaB = labA[2] - labB[2];
+  let c1 = Math.sqrt(labA[1] * labA[1] + labA[2] * labA[2]);
+  let c2 = Math.sqrt(labB[1] * labB[1] + labB[2] * labB[2]);
+  let deltaC = c1 - c2;
+  let deltaH = deltaA * deltaA + deltaB * deltaB - deltaC * deltaC;
+  deltaH = deltaH < 0 ? 0 : Math.sqrt(deltaH);
+  let sc = 1.0 + 0.045 * c1;
+  let sh = 1.0 + 0.015 * c1;
+  let deltaLKlsl = deltaL / (1.0);
+  let deltaCkcsc = deltaC / (sc);
+  let deltaHkhsh = deltaH / (sh);
+  let i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
+  return i < 0 ? 0 : Math.sqrt(i);
+}
+
+function rgb2lab(rgb){
+  let r = rgb[0] / 255, g = rgb[1] / 255, b = rgb[2] / 255, x, y, z;
+  r = (r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+  g = (g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+  b = (b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+  x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
+  y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.00000;
+  z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+  x = (x > 0.008856) ? Math.pow(x, 1/3) : (7.787 * x) + 16/116;
+  y = (y > 0.008856) ? Math.pow(y, 1/3) : (7.787 * y) + 16/116;
+  z = (z > 0.008856) ? Math.pow(z, 1/3) : (7.787 * z) + 16/116;
+  return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)]
+}
 
 const render = (ctx, flagCode, func) => {
-    console.log("render", ctx)
+    debounce = true;
 
     const newImage = new Image();
     newImage.src = `./flags/${flagCode}.svg`;
@@ -374,8 +411,6 @@ const render = (ctx, flagCode, func) => {
 
         if (ctx === guessContext) {
             let success = 0;
-
-            console.log("guessing")
 
             const imageData = guessContext.getImageData(0, 0, canvas.width, canvas.height);
             const imageData1 = answerContext.getImageData(0, 0, canvas.width, canvas.height);
@@ -389,8 +424,8 @@ const render = (ctx, flagCode, func) => {
             for (let i = 0; i < data.length; i += 4) {
                 if (data[i + 3] == 0 && data[i + 3] == data1[i + 3]) { success += 1; continue }
                 if (data[i + 3] == 0) continue;
-                const delta = deltaE(data[i], data[i + 1], data[i + 2], data1[i], data1[i + 1], data1[i + 2]);
-                if (delta < 0.1) {
+                const delta = deltaE([data[i], data[i + 1], data[i + 2]], [data1[i], data1[i + 1], data1[i + 2]]);
+                if (delta < 20) {
                     data[i] = data1[i];
                     data[i + 1] = data1[i + 1];
                     data[i + 2] = data1[i + 2];
@@ -412,9 +447,13 @@ const render = (ctx, flagCode, func) => {
             if (func) func(success, imageData);
         }
     }
+
+    debounce = false;
 }
 
 const resetGame = () => {
+    if (debounce) return;
+
     guesses = 0;
     playing = true;
 
@@ -430,7 +469,7 @@ const resetGame = () => {
     }
 
     const randomFlag = randomKey(objects);
-    console.log(randomFlag)
+    flag = randomFlag;
 
     render(answerContext, randomFlag);
 }
@@ -469,9 +508,8 @@ window.addEventListener("load", () => {
         const listElement = document.createElement("li");
         listElement.innerHTML = `<button><img src="./flags/${key}.svg" height="14"><span>${value[1]}</span></button>`
         listElement.querySelector('button').addEventListener("click", () => {
-            if (playing) {
+            if (playing && !debounce) {
                 // guessing
-                guesses += 1;
 
                 for (let i = 0; i < guessFlags.length; i++) {
                     if (guessFlags[i] === key) {
@@ -479,6 +517,8 @@ window.addEventListener("load", () => {
                         return;
                     }
                 }
+
+                guesses += 1;
 
                 guessFlags.push(key);
 
@@ -488,15 +528,15 @@ window.addEventListener("load", () => {
 
                 if (guesses >= 6) {
                     playing = false
-                    annoyingText.innerHTML = "aw man"
+                    annoyingText.innerHTML = `aw man, you lost! the flag is ${objects[flag][1]} <img src="./flags/${flag}.svg" height="14">`
                 }
 
-                render(guessContext, key, (success, imageData) => {
-                    if (success === (canvas.width * canvas.height)) {
-                        annoyingText.innerHTML = "nice! you win!";
-                        playing = false
-                    };
+                if (key === flag) {
+                    annoyingText.innerHTML = "nice! you win!";
+                    playing = false
+                };
 
+                render(guessContext, key, (success, imageData) => {
                     console.log(success)
                     console.log(success / (canvas.width * canvas.height));
 
@@ -519,7 +559,7 @@ window.addEventListener("load", () => {
 
     const randomFlag = randomKey(objects);
     //const randomFlag = "kh";
-    console.log(randomFlag)
+    flag = randomFlag;
 
     //render(context, randomFlag);
     render(answerContext, randomFlag);

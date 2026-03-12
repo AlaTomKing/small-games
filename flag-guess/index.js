@@ -16,8 +16,8 @@ const answerContext = canvas1.getContext("2d");
 const canvas2 = document.createElement("canvas");
 const guessContext = canvas2.getContext("2d");
 
-canvas.width = 512;
-canvas.height = 512;
+canvas.width = 900;
+canvas.height = 600;
 
 canvas1.width = canvas.width;
 canvas1.height = canvas.height;

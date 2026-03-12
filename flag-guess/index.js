@@ -387,6 +387,7 @@ const render = (ctx, flagCode, func) => {
             const data2 = imageData2.data;
 
             for (let i = 0; i < data.length; i += 4) {
+                if (data[i + 3] == 0 && data[i + 3] == data1[i + 3]) { success += 1; continue }
                 if (data[i + 3] == 0) continue;
                 const delta = deltaE(data[i], data[i + 1], data[i + 2], data1[i], data1[i + 1], data1[i + 2]);
                 if (delta < 0.1) {
@@ -424,6 +425,8 @@ const resetGame = () => {
     for (let i = 0; i < 6; i++) {
         guessList.querySelector(`li:nth-child(${i+1})`).innerHTML = "---";
         renderContext.clearRect(0, 0, canvas.width, canvas.height);
+        answerContext.clearRect(0, 0, canvas.width, canvas.height);
+        guessContext.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     const randomFlag = randomKey(objects);

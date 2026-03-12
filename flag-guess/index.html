@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flag guess - small games</title>
+    <style>
+        body {
+            font-family: "Comic Sans MS", Arial, Helvetica, sans-serif;
+            text-align: center;
+            margin-inline: 32px;
+            overflow-x: hidden;
+            background-color: #aaa;
+        }
+
+        a,
+        a:visited {
+            color: #00f;
+        }
+
+        a:hover {
+            color: #ff0;
+        }
+
+        a:active {
+            color: #fc0;
+        }
+
+        #frame {
+            aspect-ratio: 1.5;
+            background-color: #ddd;
+
+            border: solid black 1px;
+            border-radius: 3px;
+
+            max-height: 27vh;
+
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #frame1 {
+            /*aspect-ratio: 1.5;*/
+
+            border: solid black 1px;
+            border-radius: 3px;
+
+            width: 250px;
+            max-height: 20vh;
+
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #search-frame {
+            border: solid black 1px;
+            border-radius: 3px;
+
+            width: 250px;
+
+            margin-left: auto;
+            margin-right: auto;
+            
+            max-height: 360px;
+
+            overflow:scroll;
+        }
+
+        #guess-list {
+            margin: 0;
+        }
+
+        ul {
+            padding-left: 8px;
+            list-style-type: none;
+            text-align: left;
+        }
+
+        ul button {
+            /*background-color: white;*/
+        }
+
+        #guess-list li {
+            margin: 0;
+        }
+
+        #guess-list canvas {
+            height: 14px;
+            border: solid 1px black;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>small games: flag guess</h1>
+    <p>guess the flags of countries and territories!</p>
+    <a href="/">return to main website</a><br><br>
+
+    <p id="annoyingText">hello!</p>
+
+    <div id="frame">
+        <canvas id="canvas" style="width: 100%; height: 100%;">
+
+        </canvas>
+    </div><br>
+
+    <div id="frame1">
+        <ul id="guess-list">
+            <li>---</li>
+            <li>---</li>
+            <li>---</li>
+            <li>---</li>
+            <li>---</li>
+            <li>---</li>
+        </ul>
+    </div>
+
+    <div>
+        <input id="search" type="text"><button id="reset">Reset</button>
+
+        <div id="search-frame">
+            <ul id="search-list">
+            </ul>
+        </div>
+    </div>
+
+    <small>© 2026 AlaTomKing</small>
+
+    <script type="module" src="index.js"></script>
+</body>
+
+</html>

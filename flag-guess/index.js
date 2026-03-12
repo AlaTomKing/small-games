@@ -499,9 +499,9 @@ searchInput.addEventListener("input", search);
 searchInput.addEventListener("focus", () => {
 })
 
-searchInput.addEventListener("blur", () => {
+/*searchInput.addEventListener("blur", () => {
     console.log("search blur")
-})
+})*/
 
 window.addEventListener("load", () => {
     for (const [key, value] of Object.entries(objects)) {
@@ -537,9 +537,6 @@ window.addEventListener("load", () => {
                 };
 
                 render(guessContext, key, (success, imageData) => {
-                    console.log(success)
-                    console.log(success / (canvas.width * canvas.height));
-
                     const rate = Math.floor(success / (canvas.width * canvas.height) * 10000) / 100
 
                     const newCanvas = document.createElement("canvas");
@@ -568,5 +565,3 @@ window.addEventListener("load", () => {
 })
 
 resetButton.addEventListener("click", resetGame);
-
-console.log(document.querySelector("html body div input#search").value);

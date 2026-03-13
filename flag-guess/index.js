@@ -425,7 +425,7 @@ const render = (ctx, flagCode, func) => {
                 if (data[i + 3] == 0 && data[i + 3] == data1[i + 3]) { success += 1; continue }
                 if (data[i + 3] == 0) continue;
                 const delta = deltaE([data[i], data[i + 1], data[i + 2]], [data1[i], data1[i + 1], data1[i + 2]]);
-                if (delta < 20) {
+                if (delta < 25) {
                     data[i] = data1[i];
                     data[i + 1] = data1[i + 1];
                     data[i + 2] = data1[i + 2];

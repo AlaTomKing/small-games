@@ -162,6 +162,7 @@ const countriesList = {
     "hu": [3, "Hungary"],
     "is": [3, "Iceland"],
     "ie": [3, "Ireland", "Republic of Ireland"],
+    "it": [3, "Italy", "Italian Republic"],
 
     "xk": [3, "Kosovo", "Republic of Kosovo"],
 
